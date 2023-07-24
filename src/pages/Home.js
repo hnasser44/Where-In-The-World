@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import SearchInput from "../components/SearchInput";
 import FilterRegion from "../components/FilterRegion";
-import CountryCard from "../components/CountryCard";
-import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Countries from "../components/Countries";
