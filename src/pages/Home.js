@@ -9,47 +9,63 @@ import Countries from "../components/Countries";
 const Home = () => {
   const [countries, setCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFiltering, setIsFiltering] = useState(false);
-  const [filteredCountries, setfilteredCountries] = useState([]);
+  const [isSearchFiltering, setIsSearchFiltering] = useState(false);
+  const [isRegionFiltering, setIsRegionFiltering] = useState(false);
+  const [SearchfilteredCountries, setSearchfilteredCountries] = useState([]);
+  const [RegionfilteredCountries, setRegionfilteredCountries] = useState([]);
+  const [SearchText, setSearchText] = useState("");
   const [currentRegion, setCurrentRegion] = useState("All Regions");
   const BASE_URL = "https://restcountries.com/v3.1";
 
   const fetchCountries = async () => {
-    setfilteredCountries([]);
     const response = await axios.get(`${BASE_URL}/all`);
     const data = response.data;
     setCountries(data);
   };
 
+  const CheckFiltering = () => {
+    if (isSearchFiltering && isRegionFiltering) {
+      const result = SearchfilteredCountries.filter((country) =>
+        RegionfilteredCountries.includes(country)
+      );
+      return result;
+    } else if (isSearchFiltering) {
+      return SearchfilteredCountries;
+    } else if (isRegionFiltering) {
+      return RegionfilteredCountries;
+    } else {
+      return countries;
+    }
+  };
+
   const fetchCountriesByRegion = async (region) => {
+    if (currentRegion === region) return;
     setIsLoading(true);
-    toast.success(`Showing ${region} countries...`, {
+    setCurrentRegion(region);
+    const result = countries.filter((country) => country.region === region);
+    setRegionfilteredCountries(result);
+    setIsRegionFiltering(true);
+    const message = SearchText === "" ? "All" : "with name  " + SearchText;
+    toast.success(`Showing ${region} countries ${message}`, {
       position: "top-right",
       autoClose: 2000,
       closeOnClick: true,
       theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
     });
-    const response = await axios.get(`${BASE_URL}/region/${region}`);
-    const data = response.data;
-    setCountries(data);
+
     setIsLoading(false);
   };
 
-  const filterCountriesByName = async (name) => {
-    setIsFiltering(name !== "");
+  const filterCountriesBySearch = async (name) => {
     if (name === "") return;
-    const filteredCountries = countries.filter((country) =>
+    setSearchText(name);
+    setIsLoading(true);
+    const result = countries.filter((country) =>
       country.name.common.toLowerCase().includes(name.toLowerCase())
     );
-    if (filteredCountries.length === 0) {
-      toast.error(`No countries found with name ${name} in ${currentRegion}`, {
-        position: "top-right",
-        autoClose: 2000,
-        closeOnClick: true,
-        theme: localStorage.getItem("theme") === "dark" ? "dark" : "light",
-      });
-    }
-    setfilteredCountries(filteredCountries);
+    setSearchfilteredCountries(result);
+    setIsSearchFiltering(true);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -59,7 +75,7 @@ const Home = () => {
   return (
     <>
       <div className="flex flex-col justify-center gap-3 lg:flex-row lg:justify-between lg:items-end">
-        <SearchInput filterCountriesByName={filterCountriesByName} />
+        <SearchInput filterCountriesByName={filterCountriesBySearch} />
         <FilterRegion
           fetchCountriesByRegion={fetchCountriesByRegion}
           setCurrentRegion={setCurrentRegion}
@@ -70,9 +86,7 @@ const Home = () => {
           !isLoading && "loaded"
         }`}
       >
-        <Countries
-          currentCountries={isFiltering ? filteredCountries : countries}
-        />
+        <Countries currentCountries={CheckFiltering()} />
       </div>
 
       <ToastContainer
