@@ -1,4 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ArrowBack from "../images/arrow-left.svg";
