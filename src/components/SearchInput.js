@@ -12,7 +12,7 @@ const SearchInput = ({ filterCountriesByName }) => {
         type="text"
         placeholder="Search for a country..."
         className="bg-white dark:bg-dark-blue dark:text-white dark:placeholder-white shadow-xl rounded-md p-4 w-full pl-24 focus:outline-none"
-        onChange={(e) => filterCountriesByName(e.target.value)}
+        onChange={(e) => filterCountriesByName(e.target.value.trim())}
       />
     </div>
   );

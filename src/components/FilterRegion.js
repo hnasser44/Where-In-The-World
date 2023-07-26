@@ -3,7 +3,7 @@ import ArrowDownIcon from "../images/arrow-down.svg";
 
 const FilterRegion = ({ fetchCountriesByRegion, setCurrentRegion }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const Regions = ["Africa", "America", "Asia", "Europe", "Oceania"];
+  const Regions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
 
   const handleRegionChange = (region) => {
     fetchCountriesByRegion(region);
